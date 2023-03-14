@@ -1,0 +1,32 @@
+#A496
+# Написать функцию one_list(arr), которая получает список из произвольного количества элементов и 
+# объединяет их в один список. Если какой-либо из является в свою очередь списком, 
+# то отдельные объекты в массиве будут сглажены так, чтобы результатом был одноуровневый список.
+#
+# Пример:
+# one_list([[1,2],[3,4,5],[6,[7],[[8]]]]) ==> [1,2,3,4,5,6,7,8]
+
+
+import traceback
+
+
+def one_list(arr):
+    narr = []
+    if not isinstance(arr, list):
+        return [arr]
+    else:
+        for x in arr:
+            narr = narr + one_list(x)
+    return narr
+
+
+# Тесты
+try:
+    assert one_list([1, 2, 3]) == [1, 2, 3]
+    assert one_list([[1, 2], [3, 4, 5], [6, [7], [[8]]]]) == [1, 2, 3, 4, 5, 6, 7, 8]
+    assert one_list([[0, 2, [0, [4, 5]]], [[]], 0]) == [0, 2, 0, 4, 5, 0]
+except AssertionError:
+    print("TEST ERROR")
+    traceback.print_exc()
+else:
+    print("TEST PASSED")
