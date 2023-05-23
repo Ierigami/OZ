@@ -1,0 +1,192 @@
+import traceback
+
+
+def strong_enough(earthquake, age):
+    sum, Epwr = 0, 1
+    Bpwr = 1000
+    for i in earthquake:
+        for j in range(len(i)):
+            sum += i[j]
+        Epwr *= sum
+        sum = 0
+    Bpwr = 1000 * (0.99**age)
+    if Epwr > Bpwr:
+        return False
+    else:
+        return True
+
+try:
+    assert strong_enough([[2,3,1],[3,1,1],[1,1,2]], 2) == True
+    assert strong_enough([[5,8,7],[3,3,1],[4,1,2]], 2) == True
+    assert strong_enough([[5,8,7],[3,3,1],[4,1,2]], 3) == False
+except AssertionError:
+    print("TEST ERROR")
+    traceback.print_exc()
+else:
+    print("TEST PASSED")
+
+
+
+
+
+#А572
+# Создать список (коллекция фильмов), состоящий из словарей (фильмы). Словари должны содержать как минимум 5 полей
+# (например, номер, название, год выхода...). В список добавить хотя бы 10 словарей.
+# Конструкция вида:
+# films = [{"id" : 123456, "title" : "Титаник", "year" : "1997",...} , {...}, {...}, ...]
+# Реализовать функции:
+# – вывода информации о всех фильмах;
+# – вывода информации о фильме по введенному с клавиатуры номеру;
+# – вывода количества фильмов, новее введённого года;
+# – обновлении всей информации о фильме по введенному номеру;
+# – удалении фильма по номеру.
+# Провести тестирование функций.
+
+films = [{"id": 123456, "title": "Титаник", "year": 1997, "genres": "Романтика", "time": 196},
+         {"id": 123457, "title": "Слендермен", "year": 2018, "genres": "Ужасы", "time": 100},
+         {"id": 123458, "title": "Дрейф", "year": 2006, "genres": "Ужасы", "time": 94},
+         {"id": 123459, "title": "Поиск", "year": 2018, "genres": "Триллер", "time": 102},
+         {"id": 123460, "title": "Объезд", "year": 2013, "genres": "Триллер", "time": 86},
+         {"id": 123461, "title": "Проклятие", "year": 2020, "genres": "Ужасы", "time": 94},
+         {"id": 123462, "title": "Мира", "year": 2022, "genres": "Драма", "time": 116},
+         {"id": 123463, "title": "Инфекция", "year": 2019, "genres": "Ужасы", "time": 100},
+         {"id": 123464, "title": "Матильда", "year": 2022, "genres": "Мюзикл", "time": 117},
+         {"id": 123465, "title": "Кислород", "year": 2021, "genres": "Ужасы", "time": 101}]
+
+
+def full(films):
+    for i in films:
+        for j in i:
+            print(j, "-", i[j], " ",  end="")
+        print("\n")
+
+
+def number(films):
+    print("Введите номер фильма: ")
+    n = int(input())
+    for i in films:
+        if i["id"] == n:
+            for j in i:
+                print(j, "-", i[j], " ",  end="")
+
+
+def new(films):
+    print("Введите год: ")
+    n = int(input())
+    count = 0
+    for i in films:
+        if i["year"] > n:
+            count += 1
+    print("Количество фильмов, моложе введенной даты: ", count)
+
+
+def update(films):
+    print("Введите номер фильма: ")
+    n = int(input())
+    flag = False
+    for i in films:
+        if i["id"] == n:
+            print("Введите новый год выпуска фильма: ")
+            i["year"] = int(input())
+            print("Введите новый жанр: ")
+            i["genres"] = str(input())
+            print("Введите новое время: ")
+            i["time"] = int(input())
+            flag = True
+    if flag == False:
+        a = "Фильма под таким номером не существует"
+        return a
+    return films
+
+
+def de(films):
+    print("Введите номер фильма: ")
+    n = int(input())
+    for i in films:
+        if i["id"] == n:
+            films.remove(i)
+
+
+full(films)
+print("\n")
+number(films)
+print("\n")
+new(films)
+print("\n")
+update(films)
+print("\n")
+full(films)
+print("\n")
+de(films)
+print("\n")
+full(films)
+
+
+
+
+
+#A496
+# Написать функцию one_list(arr), которая получает список из произвольного количества элементов и
+# объединяет их в один список. Если какой-либо из является в свою очередь списком,
+# то отдельные объекты в массиве будут сглажены так, чтобы результатом был одноуровневый список.
+#
+# Пример:
+# one_list([[1,2],[3,4,5],[6,[7],[[8]]]]) ==> [1,2,3,4,5,6,7,8]
+
+
+import traceback
+
+
+def one_list(arr):
+    narr = []
+    if not isinstance(arr, list):
+        return [arr]
+    else:
+        for x in arr:
+            narr = narr + one_list(x)
+    return narr
+
+
+# Тесты
+try:
+    assert one_list([1, 2, 3]) == [1, 2, 3]
+    assert one_list([[1, 2], [3, 4, 5], [6, [7], [[8]]]]) == [1, 2, 3, 4, 5, 6, 7, 8]
+    assert one_list([[0, 2, [0, [4, 5]]], [[]], 0]) == [0, 2, 0, 4, 5, 0]
+except AssertionError:
+    print("TEST ERROR")
+    traceback.print_exc()
+else:
+    print("TEST PASSED")
+    
+    
+    
+    # Написать функцию sameness_index, которая возвращает индекс N, где сумма целых чисел слева от N
+# равна сумме целых чисел справа от N. Если нет индекса, который бы это сделал, верните -1.
+#
+# Пример:
+# [1, 2, 3, 4, 3, 2, 1]  => 3 -> 1 + 2 + 3 = 3 + 2 + 1
+
+
+import traceback
+
+
+def sameness_index(arr):
+    def sameness_index(arr):
+        for i in range(len(arr)):
+            if sum(arr[:i]) == sum(arr[i + 1:]):
+                return i
+        return -1
+    return 0
+
+
+# Тесты
+try:
+    assert sameness_index([1, 2, 3, 4, 5, 6]) == -1
+    assert sameness_index([20, 10, 30, 10, 10, 15, 35]) == 3
+    assert sameness_index([20, 10, -80, 10, 10, 15, 35]) == 0
+    assert sameness_index([10, -80, 10, 10, 15, 35, 20]) == 6
+except AssertionError:
+    print("TEST ERROR")
+    traceback.print_exc()
+else:
+    print("TEST PASSED")
