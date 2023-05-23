@@ -1,0 +1,150 @@
+class Car:
+
+    def __init__(self, arg_brand, arg_power, arg_year):
+        self.brand = arg_brand
+        self.power = arg_power
+        self.year = arg_year
+
+    def __str__(self):
+        return "{}, {}, {} лет".format(self.brand, self.power, self.year)
+
+class PassengerCar(Car):
+    def __init__(self, arg_brand, arg_power, arg_year, arg_num):
+        super().__init__(arg_brand, arg_power, arg_year)
+        self.num = arg_num
+        self.book = {}
+
+    def new_note(self, type, time):
+        self.book.update({type:time})
+
+    def get_year(self, a):
+        try:
+            print("Год замены запчасти ", end="")
+            print('"', a,'"', ": ",  end="", sep="")
+            print(self.book[a])
+            return 0
+        except KeyError as err:
+            print("Запчасть не найдена")
+            return 0
+
+
+    def format_book_print(self, c):
+        print("Форматированный список запчастей и времени их замены:")
+        for i in self.book:
+            print(i, " - ", end="")
+            print(self.book[i])
+        return 0
+
+
+    def info1(self):
+        s = super().__str__()
+        print(s + ", {} пассажира(ов), ".format(self.num))
+
+class Truck(Car):
+
+    def __init__(self, arg_brand, arg_power, arg_year, arg_max_cap, arg_name, arg_surname):
+        super().__init__(arg_brand, arg_power, arg_year)
+        self.max_cap = arg_max_cap
+        self.name = arg_name
+        self.surname = arg_surname
+        self.cargo = {}
+
+    def change_name(self, newName):
+        self.name = newName
+
+    def change_surname(self, newSurname):
+        self.surname = newSurname
+
+    def add_cargo(self, type, weight):
+        self.cargo.update({type: weight})
+
+    def delete_cargo(self, type):
+        try:
+            del self.cargo[type]
+        except KeyError as err:
+            print("Невозможно удалить элемент, так как он не найден в списке")
+
+    def print_cargo(self):
+        for i in self.cargo:
+            print(i, " - ", end="")
+            print(self.cargo[i])
+        return 0
+
+    def info2(self):
+        s = super().__str__()
+        print(s + ", {} кг, водитель {} {} ".format(self.max_cap, self.surname, self.name))
+
+class Autopark:
+    def __init__(self, arg_name):
+        self.name = arg_name
+        self.pass_list = []
+        self.truck_list = []
+
+    def add_cars(self, pass_car):
+        self.pass_list.append(pass_car)
+
+    def add_trucks(self, truck_car):
+        self.truck_list.append(truck_car)
+
+    def get_truck_num(self):
+        return len(self.truck_list)
+
+    def get_truck_index(self, index):
+        try:
+            print(self.truck_list[index])
+        except IndexError as err:
+            print("Индекс не найден")
+        except NameError as err:
+            print("Введен не индекс")
+
+
+    def info3(self):
+        print("{} ".format(self.name) + "\n")
+        print("Список пассажирских автомобилей: ", )
+        for pas in self.pass_list:
+            pas.info1()
+        print("\n", "Список грузовиков: ")
+        for tr in self.truck_list:
+            tr.info2()
+
+
+
+
+autopark1 = Autopark("Звезда")
+car1 = PassengerCar("Уаз", 100, 1994, 3)
+car2 = PassengerCar("Тигуан", 100, 2010, 4)
+car3 = Truck("Камаз", 100, 1999, 6, "андрей", "филатов")
+car4 = Truck("Зил", 100, 2001, 6, "дзержинский", "рахман")
+
+autopark1.add_cars(car1)
+autopark1.add_cars(car2)
+
+autopark1.add_trucks(car3)
+autopark1.add_trucks(car4)
+
+#autopark1.info3()
+
+autopark1.get_truck_index(1)
+
+
+# Для проверки класса PassengerCar
+# car1 = PassengerCar(1, 2, 3, 4)
+# car1.new_note("колесо", 1994)
+# car1.new_note("радиатор", 2000)
+# print(car1)
+#
+# a = car1.get_year("колесо")
+# print(a)
+# car1.format_book_print(car1)
+#Для проверки класса Truck
+# car2 = Truck(1, 2, 3, 4, 5, 6)
+# car2.change_surname("филатов")
+# car2.change_name("андрюша")
+# car2.add_cargo("мясо", 123)
+# car2.add_cargo("рыба", 321)
+# car2.delete_cargo("м")
+# car2.print_cargo()
+# print(car2)
+
+
+
