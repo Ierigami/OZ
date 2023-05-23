@@ -1,0 +1,282 @@
+#B184
+# Написать функцию word_mesh, которая получает список строк и возвращает объединенную строку. 
+# Слова в списке должны соединяться вместе, где одна или несколько букв в конце одного слова являются началом следующего слова в списке. 
+# Но бывают случаи, когда все слова не совпадают. 
+# Вернуть объединенную строку или "failed", если это невозможно.
+#
+# Примеры:
+# word_mesh(["allow", "lowering", "ringmaster", "terror"]) ==> "lowringter" --> "low" + "ring" + "ter"
+
+import traceback
+
+
+def word_mesh(words):
+    summ = ""
+    for i in range(len(words)-1):
+        f = 0
+        if len(words[i]) > len(words[i + 1]):
+            R = len(words[i + 1])
+        else:
+            R = len(words[i])
+        for j in range(R):
+            if (words[i][len(words[i])-1:len(words[i]) - (j+2):-1][::-1] == words[i+1][0:j+1:1]):
+                summ += words[i+1][0:j+1:1]
+                f = 1
+        if f == 0:
+            return "failed"
+    return summ
+
+
+# Тесты
+try:
+    assert word_mesh(["beacon", "condominium", "umbilical", "california"]) == "conumcal"
+    assert word_mesh(["abcdef", "defghi", "xyz"]) == "failed"
+    assert word_mesh(["allow", "lowering", "ringmaster", "terror"]) == "lowringter"
+    assert word_mesh(["abandon", "donation", "onion", "ongoing"]) == "dononon"
+    assert word_mesh(["jamestown", "ownership", "hippocampus", "pushcart", "cartographer", "pheromone"]) == "ownhippuscartpher"
+except AssertionError:
+    print("TEST ERROR")
+    traceback.print_exc()
+else:
+    print("TEST PASSED")
+    
+   #B279
+   # Написать функцию check_brackets, которая определяет правильно ли расставлены скобки () {} [] <> в предложении
+#
+# Примеры:
+# camel_to_snake("(abc)[]{0:1}") ==> True
+# camel_to_snake("(abc)]{0:1}[") ==> False
+
+import traceback
+
+
+def check_brackets(s):
+    stack = []
+    for char in s:
+        if char in '([{<':
+            stack.append(char)
+        elif char in ')]}>':
+            if not stack:
+                return False
+            elif char == ')' and stack[-1] != '(':
+                return False
+            elif char == ']' and stack[-1] != '[':
+                return False
+            elif char == '}' and stack[-1] != '{':
+                return False
+            elif char == '>' and stack[-1] != '<':
+                return False
+            else:
+                stack.pop()
+    return not stack
+
+
+# Тесты
+try:
+    assert check_brackets('(5+5)/[4+4]*{2*2}') == True
+    assert check_brackets('(3+[2*3)]') == False
+    assert check_brackets('[{([[[<>]]])(<>)(){}}]') == True
+    assert check_brackets(']()(){<>}[[()]]') == False
+    assert check_brackets('[(sjd),"2"],{2:3}, [<>]') == True
+    assert check_brackets('{[[[[((()))]]<]>]}') == False
+except AssertionError:
+    print("TEST ERROR")
+    traceback.print_exc()
+else:
+    print("TEST PASSED")
+
+
+
+
+# Написать функцию morse, которая расшифровывает строку, закодированную азбукой Морзе
+# a .-      h ....    o ---     u ..-      1 .----     6 -....
+# b -...    i ..      p .--.    v ...-     2 ..---     7 --...
+# c -.-.    j .---    q --.-    w .--      3 ...--     8 ---..
+# d -..     k -.-     r .-.     x -..-     4 ....-     9 ----.
+# e .       l .-..    s ...     y -.--     5 .....     0 -----
+# f ..-.    m --      t -       z --..
+# g --.     n -.
+
+# Пример:
+# morse("..  .- --  .-  - . ... -") ==> "i am a test"
+
+
+import traceback
+
+
+def morse(text):
+    dict = {".-": "a", "-...": "b", "-.-.": "c", "-..": "d", ".": "e", "..-.": "f", "--.": "g", "....": "h", \
+            "..": "i", ".---": "j", "-.-": "k", ".-..": "l", "--": "m", "-.": "n", "---": "o", ".--.": "p", \
+            "--.-": "q", ".-.": "r", "...": "s", "-": "t", "..-": "u", "...-": "v", ".--": "w", "-..-": "x", "-.--": \
+                "y", "--..": "z", ".----": "1", "..---": "2", "...--": "3", "....-": "4", ".....": "5", "-....": "6", \
+            "--...": "7", "---..": "8", "----.": "9", "-----": "0"}
+    text = text.split("  ")
+    a = ""
+    result = ""
+    for i in range(len(text)):
+        text[i].join(" ")
+        b = text[i].split()
+        for j in range(len(b)):
+            result += dict[b[j]]
+        result += " "
+    return result[:-1]
+
+# Тесты
+try:
+    assert morse(".... . .-.. .-.. ---  .-- --- .-. .-.. -..") == "hello world"
+    assert morse(".---- ... -  .- -. -..  ..--- -. -..") == "1st and 2nd"
+    assert morse(".- -... -.-. -.. . ..-. --. .... .. .--- -.- .-.. -- -. --- .--. --.- .-. ... - ..- ...- .-- -..- -.-- --.. ----- .---- ..--- ...-- ....- ..... -.... --... ---.. ----.") \
+        == "abcdefghijklmnopqrstuvwxyz0123456789"
+    assert morse("") == ""
+except AssertionError:
+    print("TEST ERROR")
+    traceback.print_exc()
+else:
+    print("TEST PASSED")
+
+
+
+
+
+"""
+Создать txt-файл, вставить туда любую англоязычную статью из Википедии.
+Реализовать одну функцию, которая выполняет следующие операции:
+- прочитать файл построчно;
+- непустые строки добавить в список;
+- удалить из каждой строки все цифры, знаки препинания, скобки, кавычки и т.д. (остаются латинские буквы и пробелы);
+- объединить все строки из списка в одну, используя метод join и пробел, как разделитель;
+- создать словарь вида {“слово”: количество, “слово”: количество, … } для подсчета количества разных слов,
+  где ключом будет уникальное слово, а значением - количество;
+- вывести в порядке убывания 10 наиболее популярных слов, используя форматирование
+  (вывод примерно следующего вида: “ 1 place --- sun --- 15 times \n....”);
+- заменить все эти слова в строке на слово “PYTHON”;
+- создать новый txt-файл;
+- записать строку в файл, разбивая на строки, при этом на каждой строке записывать не более 100 символов
+  при этом не делить слова.
+"""
+file = "text.txt"
+list = []
+def wiki_function():
+    arr = []
+    with open('text.txt', "r") as f:
+        # 1
+        for line in f:
+            # 2
+            if line.strip():
+                arr.append(line)
+    # 3
+    for i in range(len(arr)):
+        new_line = ""
+        for letter in arr[i]:
+            if (65 <= ord(letter) <= 90) or (97 <= ord(letter) <= 122) or ord(letter) == 32:
+                new_line += letter
+        arr[i] = new_line
+    # 4
+    big_s = " ".join(arr)
+    # 5
+    word = ""
+    dic = dict()
+    for letter in big_s:
+        if letter != " ":
+            word += letter
+            # word += letter.lower()
+        else:
+            if word in dic:
+                dic[word] += 1
+            else:
+                dic[word] = 1
+            word = ""
+    if word != "":
+        if word in dic:
+            dic[word] += 1
+        else:
+            dic[word] = 1
+        word = ""
+    # 6 + #7
+    ex = "{:^3} place --- {:^7} --- {:^3} times"
+    count = 1
+    for key, value in sorted(dic.items(), key=lambda item: item[1], reverse=True):
+        print(ex.format(count, key, value))
+
+        big_s = big_s.replace(" " + key + " ", " PYTHON ")
+        word = ""
+        for letter in big_s:
+            if letter != " ":
+                word += letter
+            else:
+                if word == key:
+                    big_s = big_s.replace(key, "PYTHON", 1)
+                break
+        word = ""
+        for letter in big_s[::-1]:
+            if letter != " ":
+                word = letter + word
+            else:
+                if word == key:
+                    big_s = big_s[::-1].replace(key[::-1], "PYTHON"[::-1], 1)[::-1]
+                break
+
+        count += 1
+        if count > 10:
+            break
+    print(big_s)
+
+    # 8 + #9
+    w = big_s.split()
+    lines_s = [""] * (len(big_s) // 100 + 10)
+    count = 0
+    cell = 0
+    for x in w:
+        if count + len(x) + 1 < 100:
+            lines_s[cell] += x + " "
+            count += len(x) + 1
+        else:
+            lines_s[cell] += "\n"
+            cell += 1
+            lines_s[cell] += x + " "
+            count = len(x)
+    with open("text2.txt", "w") as file:
+        file.writelines(lines_s)
+    return 1
+
+
+
+# Вызов функции
+wiki_function()
+
+
+
+
+ Kanye Omari West is an American rapper, singer,
+songwriter, record producer, and fashion designer.[1][2][3][4]
+
+Born in Atlanta and raised in Chicago,[5][6] West gained recognition as a producer
+for Roc-A-Fella Records in the early 2000s, producing singles for several artists and developing the "chipmunk soul"
+sampling style. Intent on pursuing a solo career as a rapper, he released his debut studio album, The College Dropout
+(2004), to critical and commercial success. He founded the record label GOOD Music later that year. West explored
+diverse musical elements like orchestras, synthesizers, and autotune on the albums Late Registration (2005), Graduation
+(2007), and 808s & Heartbreak (2008). His fifth and sixth albums My Beautiful Dark Twisted Fantasy (2010) and Yeezus
+(2013) were also met with critical and commercial success. West further diversified his musical styles on The Life of
+Pablo (2016) and Ye (2018) and explored Christian and gospel music on Jesus Is King (2019). His tenth album Donda (2021)
+ was released to continued commercial success but mixed critical reception. West's discography also includes the two
+ full-length collaborative albums Watch the Throne (2011) with Jay-Z and Kids See Ghosts (2018) with Kid Cudi.
+
+One of the world's best-selling music artists, with over 160 million records sold, West has won 24 Grammy Awards and 75
+ nominations, the joint tenth-most of all time, and the joint-most Grammy awards of any rapper along with Jay-Z.[7] Among
+ his other awards are the Billboard Artist Achievement Award, a joint-record three Brit Awards for Best International
+ Male Solo Artist and the Michael Jackson Video Vanguard Award.[8] Six of West's albums were included on Rolling Stone'
+ s 2020 500 Greatest Albums of All Time list with the same publication naming him one of the 100 Greatest Songwriters
+ of All Time.[9] He holds the joint record (with Bob Dylan) for most albums (4) topping the annual Pazz & Jop critic
+ poll. Time named him one of the 100 most influential people in the world in 2005 and 2015.[10][11] As a fashion
+ designer, he has collaborated with Nike, Louis Vuitton, Gap, and A.P.C. on clothing and footwear and led the Yeezy
+ collaboration with Adidas. He is also the founder and head of the creative content company Donda.
+
+West's outspoken views have received significant media coverage; he has been a frequent source of controversy due to
+his conduct on social media[12] and at awards shows and public settings, as well as his comments on the music and
+fashion industries, U.S. politics, race, and slavery. His Christian faith, high-profile marriage to Kim Kardashian,
+and mental health have also been topics of media attention.[13][14] In 2020, West launched an unsuccessful independent
+presidential campaign that primarily advocated for a consistent life ethic. In 2022, he was widely condemned and lost
+many sponsors and partnerships—including his collaborations with Adidas, Gap, and Balenciaga—after making a series of
+antisemitic statements.[15][16] In November 2022, he announced his 2024 presidential campaign, appearing publicly with
+Nick Fuentes, a white supremacist. West later publicly praised Adolf Hitler, denied the Holocaust,[17][18] and
+identified as a Nazi.[19][20]
